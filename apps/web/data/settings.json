@@ -1,0 +1,43 @@
+{
+  "firstName": "",
+  "lastName": "",
+  "jobTitle": "",
+  "location": "",
+  "availability": "",
+  "searchTitles": [
+    "Product Designer",
+    "UX/UI Designer"
+  ],
+  "contractTypes": [
+    "CDI",
+    "CDD",
+    "Freelance",
+    "Bénévolat"
+  ],
+  "experienceLevels": [
+    "Junior",
+    "Confirmé"
+  ],
+  "searchLocation": "Paris, Île-de-France",
+  "companySizes": [
+    "15-50",
+    "50-500",
+    ">500"
+  ],
+  "salaryMin": 38,
+  "salaryMax": 50,
+  "remotePreference": [
+    "Hybride",
+    "Présentiel"
+  ],
+  "noGos": [
+    "Défense / Militaire",
+    "Jeux d'argent",
+    "Industrie adulte",
+    "Tabac / Alcool",
+    "Énergies fossiles",
+    "Fast fashion",
+    "Crypto / NFT",
+    "Armement"
+  ]
+}

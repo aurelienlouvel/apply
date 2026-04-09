@@ -1,0 +1,21 @@
+{
+  "name": "@scouty/scraper",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "auth": "tsx src/auth.ts",
+    "scrape": "tsx src/index.ts",
+    "scrape:wttj": "tsx dev/scrape-wttj.ts",
+    "debug:wttj": "tsx dev/debug-wttj.ts",
+    "linkedin:profile": "tsx src/linkedin-profile.ts"
+  },
+  "dependencies": {
+    "playwright": "^1.42.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.4.0"
+  }
+}
