@@ -1,19 +1,23 @@
 # Scouty
 
-Personal job hunting app. Centralizes offers from multiple platforms, tracks applications, and helps prepare interviews.
+Personal job hunting app. Aggregates offers from multiple platforms, tracks applications, and helps manage interview processes — all in one place.
 
 ## How it works
 
-Scouty connects to job platforms via your browser cookies — no credentials stored. It aggregates offers across platforms into one place, lets you track every application, and helps you manage interview processes.
+Scouty uses your existing browser session to scrape job platforms — no credentials stored, no API keys needed. The scraper saves results locally, and the web app reads them to display a unified feed you can filter, save, and act on.
 
-Supported platforms: LinkedIn, Welcome to the Jungle, HelloWork, Glassdoor, Jobs that Make Sense, Collective, Contra.
+```
+pnpm scrape  →  .local/output/jobs.json  →  web app (localhost:3000)
+```
+
+Supported platforms: LinkedIn, Welcome to the Jungle, HelloWork, Jobs that Make Sense.
 
 ## Features
 
 - **Offers** — Browse and filter aggregated job listings across all platforms
 - **Applications** — Track every application with cover letter, date, and status (Pending / Accepted / Rejected)
 - **Processes** — Manage interview stages (HR call, Manager interview, Design case, Team fit…)
-- **Settings** — Profile, search criteria, platform connections (accessible via profile menu)
+- **Settings** — Profile, search criteria, platform connections
 
 ## Stack
 
@@ -21,10 +25,10 @@ Supported platforms: LinkedIn, Welcome to the Jungle, HelloWork, Glassdoor, Jobs
 |---|---|
 | Framework | Next.js 16 (App Router, Server Components) |
 | Language | TypeScript (strict) |
-| Styling | Tailwind CSS v4 + shadcn/ui (`@base-ui/react`) |
-| Auth | NextAuth v4 — LinkedIn OAuth (Supabase Auth planned) |
+| Styling | Tailwind CSS v4 + shadcn/ui |
+| Auth | NextAuth v4 — LinkedIn OAuth |
 | Database | File-based JSON → Supabase PostgreSQL (planned) |
-| Scraper | Node.js + Playwright (cookie-based, no credentials) |
+| Scraper | Node.js + Playwright (cookie-based) |
 | i18n | EN / FR |
 | Package manager | pnpm workspaces |
 
@@ -32,40 +36,66 @@ Supported platforms: LinkedIn, Welcome to the Jungle, HelloWork, Glassdoor, Jobs
 
 ```
 scouty/
-├── web/                        # Next.js app (Vercel)
-│   └── src/
-│       ├── app/
-│       │   ├── (auth)/         # Authenticated: /, /offers, /applications, /processes, /settings
-│       │   ├── (public)/       # Public: /login
-│       │   └── api/            # settings, auth, linkedin/profile
-│       ├── components/
-│       │   ├── layout/         # AppShell (collapsible), Sidebar
-│       │   ├── jobs/           # JobCard, JobGrid, JobFilters
-│       │   ├── settings/       # SettingsShell + tabs (Profile, Criteria, Platforms)
-│       │   ├── changelog/      # WhatsNew sheet
-│       │   ├── providers/      # Providers (SessionProvider + LocaleProvider)
-│       │   └── ui/             # shadcn components — do not modify
-│       ├── lib/                # jobs.ts, settings.ts, sources.ts, i18n.ts, changelog.ts
-│       └── types/
-│           └── jobs.ts         # Job, Source, ScrapedOutput
-└── src/                        # Scraper (Playwright)
-    ├── index.ts                # Orchestrates scrapers, writes output/jobs.json
-    ├── auth.ts                 # One-time cookie login per platform
-    └── scrapers/               # linkedin, wttj, hellowork, jobsthatmakesense
+├── apps/
+│   └── web/                        # Next.js app
+│       └── src/
+│           ├── app/
+│           │   ├── (auth)/         # Authenticated routes: /, /offers, /applications, /processes, /settings
+│           │   ├── (public)/       # Public routes: /login
+│           │   └── api/            # settings, auth, linkedin/profile
+│           ├── components/
+│           │   ├── layout/         # AppShell, Sidebar
+│           │   ├── jobs/           # JobCard, JobGrid, JobFilters
+│           │   ├── settings/       # SettingsShell + tabs (Profile, Criteria, Platforms)
+│           │   ├── changelog/      # WhatsNew sheet
+│           │   └── ui/             # shadcn/ui components — do not modify
+│           ├── lib/                # jobs.ts, settings.ts, sources.ts, i18n.ts
+│           └── types/
+│               └── jobs.ts         # Job, Source, ScrapedOutput
+└── packages/
+    └── scraper/                    # Playwright scraper
+        ├── src/
+        │   ├── index.ts            # Orchestrates all scrapers → .local/output/jobs.json
+        │   ├── auth.ts             # One-time cookie login per platform
+        │   ├── config.ts           # Search URLs per platform
+        │   ├── types.ts            # Job, ScrapedOutput
+        │   └── scrapers/           # linkedin, wttj, hellowork, jobsthatmakesense
+        └── dev/                    # Dev/debug scripts (not run in production)
+            ├── scrape-wttj.ts      # Test WTTJ scraper in isolation
+            ├── debug-wttj.ts       # Step-by-step selector debugger
+            └── debug-wttj-card.ts  # Dump raw card HTML
 ```
 
 ## Getting started
 
 ```bash
 pnpm install
+```
 
-# Web app
+Copy the environment file and fill in your values:
+
+```bash
+cp apps/web/.env.example apps/web/.env.local
+```
+
+### Scraper
+
+```bash
+# Step 1 — log in to each platform (opens a browser window, saves cookies locally)
+pnpm auth
+
+# Step 2 — scrape all platforms → .local/output/jobs.json
+pnpm scrape
+
+# Scrape a single platform
+pnpm scrape:wttj
+```
+
+### Web app
+
+```bash
 pnpm web          # dev → http://localhost:3000
 pnpm web:build    # production build
-
-# Scraper
-pnpm auth         # open browser, log in to each platform, saves cookies
-pnpm scrape       # scrape all platforms → output/jobs.json
 ```
 
 ## Roadmap
