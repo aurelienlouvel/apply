@@ -1,26 +1,46 @@
-# Stack technique
-- Framework : Next.js 16 (App Router)
-- Langage : TypeScript (strict mode)
-- Styling : Tailwind CSS v4 + shadcn/ui
-- Base de données : Supabase (PostgreSQL)
-- Auth : Supabase Auth
-- Déploiement : Vercel
-- Package manager : pnpm
+# apps/web — Claude instructions
 
-# Conventions de code
-- Nommage des composants : PascalCase (ex: UserProfile.tsx)
-- Nommage des fichiers utilitaires : camelCase (ex: formatDate.ts)
-- Toujours utiliser les Server Components par défaut
-- 'use client' uniquement quand c'est nécessaire (interactivité, hooks)
-- Exports nommés (pas de default export)
-- Types dans des fichiers séparés : src/types/[domaine].ts
+> For git conventions and monorepo structure, see the root [CLAUDE.md](../../CLAUDE.md).
 
-# Structure du projet
-- src/app/(auth)/ : pages authentifiées
-- src/app/(public)/ : pages publiques
-- src/components/ : Composants React réutilisables
-- src/components/ui/ : Composants shadcn/ui (NE PAS MODIFIER)
-- src/lib/ : Utilitaires et helpers
-- src/lib/supabase/ : Client et requêtes Supabase
-- src/types/ : Types TypeScript
-- supabase/migrations/ : Migrations SQL
+## Stack
+
+- **Framework** — Next.js 16 (App Router, Server Components)
+- **Language** — TypeScript (strict mode)
+- **Styling** — Tailwind CSS v4 + shadcn/ui
+- **Auth** — NextAuth v4 (LinkedIn OAuth)
+- **Database** — File-based JSON → Supabase PostgreSQL (planned)
+- **Deployment** — Vercel
+- **Package manager** — pnpm
+
+## Code conventions
+
+- Components: PascalCase (`JobCard.tsx`, `AppShell.tsx`)
+- Utilities and lib files: camelCase (`formatDate.ts`, `jobs.ts`)
+- Named exports only — no default exports
+- Types in dedicated files: `src/types/[domain].ts`
+- Server Components by default — use `'use client'` only when necessary (interactivity, hooks)
+
+## Project structure
+
+```
+src/
+├── app/
+│   ├── (auth)/         # Authenticated routes: /, /offers, /applications, /processes, /settings
+│   ├── (public)/       # Public routes: /login
+│   └── api/            # Route handlers: settings, auth, linkedin/profile
+├── components/
+│   ├── layout/         # AppShell, Sidebar
+│   ├── jobs/           # JobCard, JobGrid, JobFilters
+│   ├── settings/       # SettingsShell + tabs (Profile, Criteria, Platforms)
+│   ├── changelog/      # WhatsNew sheet
+│   ├── providers/      # Providers (SessionProvider, LocaleProvider)
+│   └── ui/             # shadcn/ui components — do not modify
+├── lib/
+│   ├── jobs.ts         # Read scraped jobs from .local/output/jobs.json
+│   ├── settings.ts     # Read/write user settings from data/settings.json
+│   ├── sources.ts      # Platform metadata (labels, colors, cookie keys)
+│   ├── i18n.ts         # EN / FR translations
+│   └── utils.ts        # Shared helpers
+└── types/
+    └── jobs.ts         # Job, Source, ScrapedOutput
+```
