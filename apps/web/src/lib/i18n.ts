@@ -23,7 +23,7 @@ export const translations = {
       signIn: 'Sign in',
     },
     auth: {
-      title: 'Welcome to Scouty',
+      title: 'Welcome to Apply',
       subtitle: 'Your personal job research dashboard.',
       headlineLine1: 'Smart and focused',
       headlineLine2: 'job hunting',
@@ -114,7 +114,7 @@ export const translations = {
       comingSoon: 'Soon',
       howItWorksTitle: 'How it works',
       howItWorksText:
-        'Scouty opens a browser, you log in manually, then your session cookies are saved locally. No passwords are stored.',
+        'Apply opens a browser, you log in manually, then your session cookies are saved locally. No passwords are stored.',
     },
     jobs: {
       title: 'Jobs',
@@ -126,7 +126,7 @@ export const translations = {
     },
     changelog: {
       title: "What's New",
-      subtitle: 'Recent updates and improvements to Scouty.',
+      subtitle: 'Recent updates and improvements to Apply.',
       types: { new: 'New', fix: 'Fix', improvement: 'Improvement' },
     },
   },
@@ -147,7 +147,7 @@ export const translations = {
       signIn: 'Se connecter',
     },
     auth: {
-      title: 'Bienvenue sur Scouty',
+      title: 'Bienvenue sur Apply',
       subtitle: "Votre tableau de bord de recherche d'emploi.",
       headlineLine1: "Votre recherche d'emploi,",
       headlineLine2: 'enfin centralisée',
@@ -238,7 +238,7 @@ export const translations = {
       comingSoon: 'Bientôt',
       howItWorksTitle: 'Comment ça fonctionne ?',
       howItWorksText:
-        "Scouty ouvre un navigateur, vous vous connectez manuellement, puis vos cookies de session sont sauvegardés localement. Aucun mot de passe n'est stocké.",
+        "Apply ouvre un navigateur, vous vous connectez manuellement, puis vos cookies de session sont sauvegardés localement. Aucun mot de passe n'est stocké.",
     },
     jobs: {
       title: 'Offres',
@@ -250,7 +250,7 @@ export const translations = {
     },
     changelog: {
       title: 'Nouveautés',
-      subtitle: 'Mises à jour et améliorations récentes de Scouty.',
+      subtitle: 'Mises à jour et améliorations récentes de Apply.',
       types: { new: 'Nouveau', fix: 'Correction', improvement: 'Amélioration' },
     },
   },

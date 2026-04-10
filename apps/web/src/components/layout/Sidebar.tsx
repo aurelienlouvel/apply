@@ -75,7 +75,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           {!collapsed && (
             <div className="flex items-center gap-2">
               <Radar className="size-4 shrink-0 text-foreground" />
-              <span className="text-sm font-semibold tracking-tight text-foreground">Scouty</span>
+              <span className="text-sm font-semibold tracking-tight text-foreground">Apply</span>
             </div>
           )}
           {collapsed && <Radar className="mx-auto size-4 text-foreground" />}

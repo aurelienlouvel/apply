@@ -75,7 +75,7 @@ export function WhatsNew({ open, onOpenChange }: WhatsNewProps) {
         </div>
 
         <div className="border-t border-border px-6 py-4">
-          <p className="text-xs text-muted-foreground">Scouty v{CURRENT_VERSION}</p>
+          <p className="text-xs text-muted-foreground">Apply v{CURRENT_VERSION}</p>
         </div>
       </SheetContent>
     </Sheet>

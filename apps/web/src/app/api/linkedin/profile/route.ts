@@ -2,22 +2,11 @@ import { spawn } from 'child_process';
 import fs from 'fs/promises';
 import path from 'path';
 import { writeSettings } from '@/lib/settings';
+import type { LinkedInProfile } from '@/types/linkedin';
 
-const OUTPUT_DIR = process.env.DATA_DIR ?? path.resolve(process.cwd(), '..', 'output');
+const OUTPUT_DIR = process.env.DATA_DIR ?? path.resolve(process.cwd(), '..', '.local', 'output');
 const PROFILE_PATH = path.join(OUTPUT_DIR, 'linkedin-profile.json');
 const FRESHNESS_MS = 5 * 60 * 1000; // 5 minutes
-
-interface LinkedInProfile {
-  firstName: string;
-  lastName: string;
-  jobTitle: string;
-  company: string;
-  location: string;
-  avatarUrl: string;
-  avatarLocalPath: string;
-  linkedinUrl: string;
-  fetchedAt: string;
-}
 
 async function readCachedProfile(): Promise<LinkedInProfile | null> {
   try {

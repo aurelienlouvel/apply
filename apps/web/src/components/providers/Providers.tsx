@@ -30,13 +30,13 @@ function LocaleProvider({ children }: { children: React.ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(DEFAULT_LOCALE);
 
   useEffect(() => {
-    const saved = localStorage.getItem('scouty-locale') as Locale | null;
+    const saved = localStorage.getItem('apply-locale') as Locale | null;
     if (saved === 'en' || saved === 'fr') setLocaleState(saved);
   }, []);
 
   function setLocale(l: Locale) {
     setLocaleState(l);
-    localStorage.setItem('scouty-locale', l);
+    localStorage.setItem('apply-locale', l);
     document.documentElement.lang = l;
   }
 

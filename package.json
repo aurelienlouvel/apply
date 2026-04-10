@@ -1,13 +1,13 @@
 {
-  "name": "scouty",
+  "name": "apply",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "auth":             "pnpm --filter @scouty/scraper auth",
-    "scrape":           "pnpm --filter @scouty/scraper scrape",
-    "scrape:wttj":      "pnpm --filter @scouty/scraper scrape:wttj",
-    "debug:wttj":       "pnpm --filter @scouty/scraper debug:wttj",
-    "linkedin:profile": "pnpm --filter @scouty/scraper linkedin:profile",
+    "auth":             "pnpm --filter @apply/scraper auth",
+    "scrape":           "pnpm --filter @apply/scraper scrape",
+    "scrape:wttj":      "pnpm --filter @apply/scraper scrape:wttj",
+    "debug:wttj":       "pnpm --filter @apply/scraper debug:wttj",
+    "linkedin:profile": "pnpm --filter @apply/scraper linkedin:profile",
     "web":              "pnpm --filter web dev",
     "web:build":        "pnpm --filter web build"
   }

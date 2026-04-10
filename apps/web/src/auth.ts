@@ -29,5 +29,5 @@ export const authOptions: AuthOptions = {
     },
   },
   secret:
-    process.env.NEXTAUTH_SECRET ?? "scouty-dev-secret-change-in-production",
+    process.env.NEXTAUTH_SECRET ?? "apply-dev-secret-change-in-production",
 };

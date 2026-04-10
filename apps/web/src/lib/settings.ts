@@ -4,7 +4,7 @@ import type { Source } from '@/types/jobs';
 
 const SETTINGS_PATH = path.resolve(process.cwd(), 'data', 'settings.json');
 const COOKIES_DIR =
-  process.env.COOKIES_DIR ?? path.resolve(process.cwd(), '..', 'cookies');
+  process.env.COOKIES_DIR ?? path.resolve(process.cwd(), '..', '.local', 'cookies');
 
 export interface AppSettings {
   // Profile

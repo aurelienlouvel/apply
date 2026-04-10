@@ -1,4 +1,4 @@
-# Scouty — Claude instructions
+# Apply — Claude instructions
 
 > For a full project overview, stack, and architecture, see [README.md](./README.md).
 

@@ -1,10 +1,10 @@
-# Scouty
+# Apply
 
 Personal job hunting app. Aggregates offers from multiple platforms, tracks applications, and helps manage interview processes — all in one place.
 
 ## How it works
 
-Scouty uses your existing browser session to scrape job platforms — no credentials stored, no API keys needed. The scraper saves results locally, and the web app reads them to display a unified feed you can filter, save, and act on.
+Apply uses your existing browser session to scrape job platforms — no credentials stored, no API keys needed. The scraper saves results locally, and the web app reads them to display a unified feed you can filter, save, and act on.
 
 ```
 pnpm scrape  →  .local/output/jobs.json  →  web app (localhost:3000)

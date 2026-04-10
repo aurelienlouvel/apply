@@ -47,7 +47,7 @@ async function runScraper(
 }
 
 async function main() {
-  console.log('\nScouty — starting scrape\n');
+  console.log('\nApply — starting scrape\n');
 
   const results = await Promise.allSettled([
     runScraper('linkedin', 'LinkedIn', scrapeLinkedIn),

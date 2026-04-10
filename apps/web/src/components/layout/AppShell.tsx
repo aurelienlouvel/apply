@@ -7,14 +7,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem('scouty-sidebar-collapsed');
+    const saved = localStorage.getItem('apply-sidebar-collapsed');
     if (saved === 'true') setCollapsed(true);
   }, []);
 
   function toggle() {
     setCollapsed((prev) => {
       const next = !prev;
-      localStorage.setItem('scouty-sidebar-collapsed', String(next));
+      localStorage.setItem('apply-sidebar-collapsed', String(next));
       return next;
     });
   }
