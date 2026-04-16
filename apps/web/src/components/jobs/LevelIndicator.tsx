@@ -1,26 +1,31 @@
-import { HugeiconsIcon } from '@hugeicons/react';
-import { UserFullViewIcon } from '@hugeicons/core-free-icons';
 import { cn } from '@/lib/utils';
 
 type LevelName = 'Junior' | 'Confirmed' | 'Senior' | 'Lead' | 'Manager' | 'Consultant' | 'Founding';
 type LevelColor = 'yellow' | 'orange' | 'red' | 'violet';
 
-const LEVEL_CONFIG: Record<LevelName, LevelColor> = {
-  Junior:     'yellow',
-  Confirmed:  'orange',
-  Senior:     'red',
-  Consultant: 'red',
-  Lead:       'violet',
-  Manager:    'violet',
-  Founding:   'violet',
+interface LevelConfig {
+  bars: number;
+  color: LevelColor;
+}
+
+const LEVEL_CONFIG: Record<LevelName, LevelConfig> = {
+  Junior:     { bars: 1, color: 'yellow'  },
+  Confirmed:  { bars: 2, color: 'orange'  },
+  Senior:     { bars: 3, color: 'red'     },
+  Consultant: { bars: 3, color: 'red'     },
+  Lead:       { bars: 4, color: 'violet'  },
+  Manager:    { bars: 4, color: 'violet'  },
+  Founding:   { bars: 4, color: 'violet'  },
 };
 
-const COLOR_CLASSES: Record<LevelColor, { icon: string; text: string }> = {
-  yellow: { icon: 'text-yellow-400', text: 'text-yellow-500' },
-  orange: { icon: 'text-orange-400', text: 'text-orange-500' },
-  red:    { icon: 'text-red-400',    text: 'text-red-500'    },
-  violet: { icon: 'text-violet-500', text: 'text-violet-500' },
+const COLOR_CLASSES: Record<LevelColor, { bar: string; text: string }> = {
+  yellow: { bar: 'bg-yellow-400', text: 'text-yellow-500' },
+  orange: { bar: 'bg-orange-400', text: 'text-orange-500' },
+  red:    { bar: 'bg-red-400',    text: 'text-red-500'    },
+  violet: { bar: 'bg-violet-500', text: 'text-violet-500' },
 };
+
+const BAR_HEIGHTS = ['h-2', 'h-3', 'h-4', 'h-5'] as const;
 
 interface LevelIndicatorProps {
   level: LevelName;
@@ -28,13 +33,20 @@ interface LevelIndicatorProps {
 }
 
 export function LevelIndicator({ level, className }: LevelIndicatorProps) {
-  const color = LEVEL_CONFIG[level] ?? 'yellow';
-  const classes = COLOR_CLASSES[color];
+  const cfg = LEVEL_CONFIG[level] ?? { bars: 1, color: 'yellow' as LevelColor };
+  const colors = COLOR_CLASSES[cfg.color];
 
   return (
     <div className={cn('flex flex-col items-center gap-1.5', className)}>
-      <HugeiconsIcon icon={UserFullViewIcon} size={24} className={classes.icon} />
-      <span className={cn('text-xs font-medium', classes.text)}>{level}</span>
+      <div className="flex items-end gap-[3px]">
+        {BAR_HEIGHTS.map((h, i) => (
+          <div
+            key={i}
+            className={cn('w-[5px] rounded-sm transition-colors', h, i < cfg.bars ? colors.bar : 'bg-zinc-200')}
+          />
+        ))}
+      </div>
+      <span className={cn('text-xs font-medium', colors.text)}>{level}</span>
     </div>
   );
 }
