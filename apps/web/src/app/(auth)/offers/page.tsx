@@ -88,79 +88,87 @@ export default async function OffersPage() {
   const sizeLabel = mergeCompanySizes(settings.companySizes);
 
   return (
-    <div className="min-h-full overflow-auto">
-      <div className="flex flex-col gap-12 px-12 pt-12 pb-16">
-        {/* Header */}
-        <div className="flex items-start px-8 justify-between gap-8">
-          <div className="flex flex-col gap-2">
-            {/* Title + count */}
-            <div className="flex items-center gap-2.5">
-              <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-                {settings.searchTitles.join(", ") || "Offers"}
-              </h1>
-              <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
-                {jobs.length}
-              </span>
+    <div className="min-h-full">
+      {/* Sticky header + fade gradient as one sticky block */}
+      <div className="sticky top-0 z-10">
+        <div className="bg-linear-to-b from-background to-transparent px-20 py-12">
+          <div className="flex items-start justify-between gap-8">
+            <div className="flex flex-col gap-2">
+              {/* Title + count */}
+              <div className="flex items-center gap-2.5">
+                <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+                  {settings.searchTitles.join(", ") || "Offers"}
+                </h1>
+                <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
+                  {jobs.length}
+                </span>
+              </div>
+
+              {/* Row 1: contracts · experience · salary */}
+              {(contracts.length > 0 || levels.length > 0 || salaryLabel) && (
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
+                  {contracts.length > 0 && (
+                    <CriteriaRow
+                      icon={ContractsIcon}
+                      label={contracts.join(", ")}
+                    />
+                  )}
+                  {levels.length > 0 && (
+                    <CriteriaRow
+                      icon={UserFullViewIcon}
+                      label={levels.join(", ")}
+                    />
+                  )}
+                  {salaryLabel && (
+                    <CriteriaRow icon={Money01Icon} label={salaryLabel} />
+                  )}
+                </div>
+              )}
+
+              {/* Row 2: company size · location · remote */}
+              {(sizeLabel ||
+                settings.searchLocation ||
+                remotePref.length > 0) && (
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
+                  {sizeLabel && (
+                    <CriteriaRow icon={UserMultipleIcon} label={sizeLabel} />
+                  )}
+                  {settings.searchLocation && (
+                    <CriteriaRow
+                      icon={Location06Icon}
+                      label={settings.searchLocation}
+                    />
+                  )}
+                  {remotePref.length > 0 && (
+                    <CriteriaRow
+                      icon={HomeWifiIcon}
+                      label={remotePref.join(", ")}
+                    />
+                  )}
+                </div>
+              )}
             </div>
 
-            {/* Row 1: contracts · experience · salary */}
-            {(contracts.length > 0 || levels.length > 0 || salaryLabel) && (
-              <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
-                {contracts.length > 0 && (
-                  <CriteriaRow
-                    icon={ContractsIcon}
-                    label={contracts.join(", ")}
-                  />
-                )}
-                {levels.length > 0 && (
-                  <CriteriaRow
-                    icon={UserFullViewIcon}
-                    label={levels.join(", ")}
-                  />
-                )}
-                {salaryLabel && (
-                  <CriteriaRow icon={Money01Icon} label={salaryLabel} />
-                )}
-              </div>
-            )}
-
-            {/* Row 2: company size · location · remote */}
-            {(sizeLabel ||
-              settings.searchLocation ||
-              remotePref.length > 0) && (
-              <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
-                {sizeLabel && (
-                  <CriteriaRow icon={UserMultipleIcon} label={sizeLabel} />
-                )}
-                {settings.searchLocation && (
-                  <CriteriaRow
-                    icon={Location06Icon}
-                    label={settings.searchLocation}
-                  />
-                )}
-                {remotePref.length > 0 && (
-                  <CriteriaRow
-                    icon={HomeWifiIcon}
-                    label={remotePref.join(", ")}
-                  />
-                )}
-              </div>
-            )}
+            {/* Edit button */}
+            <Link
+              href="/settings"
+              className={cn(
+                buttonVariants({ variant: "outline", size: "sm" }),
+                "mt-0.5 shrink-0 gap-1.5 text-muted-foreground",
+              )}
+            >
+              <HugeiconsIcon icon={FilterHorizontalIcon} size={14} />
+              Edit criteria
+            </Link>
           </div>
-
-          {/* Edit button */}
-          <Link
-            href="/settings"
-            className={cn(
-              buttonVariants({ variant: "outline", size: "sm" }),
-              "mt-0.5 shrink-0 gap-1.5 text-muted-foreground",
-            )}
-          >
-            <HugeiconsIcon icon={FilterHorizontalIcon} size={14} />
-            Edit criteria
-          </Link>
         </div>
 
+        {/* Fade gradient overlaying cards as they scroll under the header */}
+        {/*<div className="h-8 bg-linear-to-b from-background to-transparent pointer-events-none" />*/}
+      </div>
+
+      {/* Cards — pulled up by gradient height so first card starts at natural position */}
+      <div className="px-12 pb-16">
         <JobTable jobs={jobs} />
       </div>
     </div>
