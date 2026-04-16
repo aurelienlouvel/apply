@@ -2,13 +2,38 @@
 
 import { useEffect, useState } from 'react';
 import { Sidebar } from './Sidebar';
+import type { AppSettings } from '@/lib/settings';
 
-export function AppShell({ children }: { children: React.ReactNode }) {
+export interface JobGroup {
+  label: string;
+  count: number;
+}
+
+const DEFAULT_WIDTH = 240;
+const MIN_WIDTH = 180;
+const MAX_WIDTH = 360;
+
+export function AppShell({
+  children,
+  settings,
+  jobGroups,
+}: {
+  children: React.ReactNode;
+  settings: AppSettings;
+  jobGroups: JobGroup[];
+}) {
   const [collapsed, setCollapsed] = useState(false);
+  const [sidebarWidth, setSidebarWidth] = useState(DEFAULT_WIDTH);
 
   useEffect(() => {
-    const saved = localStorage.getItem('apply-sidebar-collapsed');
-    if (saved === 'true') setCollapsed(true);
+    const savedCollapsed = localStorage.getItem('apply-sidebar-collapsed');
+    if (savedCollapsed === 'true') setCollapsed(true);
+
+    const savedWidth = localStorage.getItem('apply-sidebar-width');
+    if (savedWidth) {
+      const w = parseInt(savedWidth, 10);
+      if (!isNaN(w) && w >= MIN_WIDTH && w <= MAX_WIDTH) setSidebarWidth(w);
+    }
   }, []);
 
   function toggle() {
@@ -19,9 +44,21 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     });
   }
 
+  function handleWidthChange(width: number) {
+    setSidebarWidth(width);
+    localStorage.setItem('apply-sidebar-width', String(width));
+  }
+
   return (
     <div className="flex h-screen overflow-hidden bg-background">
-      <Sidebar collapsed={collapsed} onToggle={toggle} />
+      <Sidebar
+        collapsed={collapsed}
+        onToggle={toggle}
+        width={sidebarWidth}
+        onWidthChange={handleWidthChange}
+        settings={settings}
+        jobGroups={jobGroups}
+      />
       <main className="flex-1 overflow-y-auto">{children}</main>
     </div>
   );
