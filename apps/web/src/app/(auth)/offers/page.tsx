@@ -89,9 +89,29 @@ export default async function OffersPage() {
 
   return (
     <div className="min-h-full">
-      {/* Sticky header + fade gradient as one sticky block */}
+      {/* Sticky header */}
       <div className="sticky top-0 z-10">
-        <div className="bg-linear-to-b from-background to-transparent px-20 py-12">
+        {/* Layer 1 — blur fading out toward the bottom via mask */}
+        <div
+          className="pointer-events-none absolute inset-0 backdrop-blur-lg"
+          style={{
+            maskImage:
+              "linear-gradient(to bottom, black 48%, transparent 100%)",
+            WebkitMaskImage:
+              "linear-gradient(to bottom, black 48%, transparent 100%)",
+          }}
+        />
+        {/* Layer 2 — solid bg fading to transparent */}
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to bottom, var(--background) 48%, transparent 100%)",
+          }}
+        />
+
+        {/* Content */}
+        <div className="relative px-20 py-12">
           <div className="flex items-start justify-between gap-8">
             <div className="flex flex-col gap-2">
               {/* Title + count */}
@@ -162,12 +182,9 @@ export default async function OffersPage() {
             </Link>
           </div>
         </div>
-
-        {/* Fade gradient overlaying cards as they scroll under the header */}
-        {/*<div className="h-8 bg-linear-to-b from-background to-transparent pointer-events-none" />*/}
       </div>
 
-      {/* Cards — pulled up by gradient height so first card starts at natural position */}
+      {/* Cards */}
       <div className="px-12 pb-16">
         <JobTable jobs={jobs} />
       </div>
