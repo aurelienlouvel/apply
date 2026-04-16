@@ -1,6 +1,7 @@
 'use client';
 
-import { ExternalLink, ArrowRight, Building2, Shuffle, Wifi, MapPin, Banknote } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { LinkSquare01Icon, ArrowRight01Icon, Building06Icon, ShuffleIcon, Wifi01Icon, Location06Icon, Money01Icon } from '@hugeicons/core-free-icons';
 import {
   Sheet,
   SheetContent,
@@ -24,9 +25,9 @@ interface JobDetailProps {
 }
 
 const WORK_MODE_CONFIG = {
-  hybrid:  { icon: Shuffle,   label: 'Hybrid',   cls: 'text-slate-500'  },
-  onsite:  { icon: Building2, label: 'On-Site',  cls: 'text-zinc-500'   },
-  remote:  { icon: Wifi,      label: 'Remote',   cls: 'text-sky-500'    },
+  hybrid:  { icon: ShuffleIcon,    label: 'Hybrid',   cls: 'text-slate-500'  },
+  onsite:  { icon: Building06Icon, label: 'On-Site',  cls: 'text-zinc-500'   },
+  remote:  { icon: Wifi01Icon,     label: 'Remote',   cls: 'text-sky-500'    },
 } as const;
 
 export function JobDetail({ job, onClose, onApply }: JobDetailProps) {
@@ -65,23 +66,23 @@ export function JobDetail({ job, onClose, onApply }: JobDetailProps) {
                 </Badge>
               )}
               {workMode && (() => {
-                const { icon: Icon, label, cls } = WORK_MODE_CONFIG[workMode];
+                const { icon, label, cls } = WORK_MODE_CONFIG[workMode];
                 return (
                   <span className={cn('flex items-center gap-1 text-xs font-medium', cls)}>
-                    <Icon className="size-3.5" />
+                    <HugeiconsIcon icon={icon} size={14} />
                     {label}
                   </span>
                 );
               })()}
               {cleanLocation && (
                 <span className="flex items-center gap-1 text-xs text-zinc-500">
-                  <MapPin className="size-3.5" />
+                  <HugeiconsIcon icon={Location06Icon} size={14} />
                   {cleanLocation}
                 </span>
               )}
               {job.salary && (
                 <Badge className="rounded-full border border-green-200 bg-green-50 text-xs text-green-700">
-                  <Banknote className="size-3" />
+                  <HugeiconsIcon icon={Money01Icon} size={12} />
                   {job.salary}
                 </Badge>
               )}
@@ -106,7 +107,7 @@ export function JobDetail({ job, onClose, onApply }: JobDetailProps) {
                 className={cn(buttonVariants({ variant: 'outline' }), 'flex-1 gap-2')}
               >
                 View offer
-                <ExternalLink className="size-3.5" />
+                <HugeiconsIcon icon={LinkSquare01Icon} size={14} />
               </a>
               <a
                 href={job.url}
@@ -116,7 +117,7 @@ export function JobDetail({ job, onClose, onApply }: JobDetailProps) {
                 className={cn(buttonVariants({ variant: 'default' }), 'flex-1 gap-2')}
               >
                 Apply
-                <ArrowRight className="size-3.5" />
+                <HugeiconsIcon icon={ArrowRight01Icon} size={14} />
               </a>
             </SheetFooter>
           </>

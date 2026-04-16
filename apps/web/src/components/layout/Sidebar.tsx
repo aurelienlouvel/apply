@@ -2,17 +2,18 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { HugeiconsIcon } from '@hugeicons/react';
 import {
-  Briefcase,
-  Radar,
-  LogOut,
-  Globe,
-  PanelLeft,
-  LayoutDashboard,
-  Send,
-  GitBranch,
-  Settings,
-} from 'lucide-react';
+  Briefcase01Icon,
+  Radar01Icon,
+  Logout01Icon,
+  Globe02Icon,
+  PanelLeftIcon,
+  DashboardCircleIcon,
+  Sent02Icon,
+  GitBranchIcon,
+  Settings01Icon,
+} from '@hugeicons/core-free-icons';
 import { useSession, signOut } from 'next-auth/react';
 import { cn } from '@/lib/utils';
 import { useState, useCallback } from 'react';
@@ -56,10 +57,10 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     : '?';
 
   const NAV = [
-    { href: '/', label: t.nav.home ?? 'Home', icon: LayoutDashboard },
-    { href: '/offers', label: t.nav.offers ?? 'Offers', icon: Briefcase },
-    { href: '/applications', label: t.nav.applications ?? 'Applications', icon: Send },
-    { href: '/processes', label: t.nav.processes ?? 'Processes', icon: GitBranch },
+    { href: '/', label: t.nav.home ?? 'Home', icon: DashboardCircleIcon },
+    { href: '/offers', label: t.nav.offers ?? 'Offers', icon: Briefcase01Icon },
+    { href: '/applications', label: t.nav.applications ?? 'Applications', icon: Sent02Icon },
+    { href: '/processes', label: t.nav.processes ?? 'Processes', icon: GitBranchIcon },
   ];
 
   return (
@@ -74,11 +75,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         <div className="mb-6 flex items-center justify-between px-2">
           {!collapsed && (
             <div className="flex items-center gap-2">
-              <Radar className="size-4 shrink-0 text-foreground" />
+              <HugeiconsIcon icon={Radar01Icon} size={16} className="shrink-0 text-foreground" />
               <span className="text-sm font-semibold tracking-tight text-foreground">Apply</span>
             </div>
           )}
-          {collapsed && <Radar className="mx-auto size-4 text-foreground" />}
+          {collapsed && <HugeiconsIcon icon={Radar01Icon} size={16} className="mx-auto text-foreground" />}
           <button
             onClick={onToggle}
             className={cn(
@@ -87,13 +88,13 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             )}
             aria-label="Toggle sidebar"
           >
-            <PanelLeft className={cn('size-4 transition-transform duration-200', collapsed && 'rotate-180')} />
+            <HugeiconsIcon icon={PanelLeftIcon} size={16} className={cn('transition-transform duration-200', collapsed && 'rotate-180')} />
           </button>
         </div>
 
         {/* Nav */}
         <nav className="flex flex-1 flex-col gap-0.5">
-          {NAV.map(({ href, label, icon: Icon }) => {
+          {NAV.map(({ href, label, icon }) => {
             const active = pathname === href || (href !== '/' && pathname.startsWith(href));
             const item = (
               <Link
@@ -107,7 +108,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                     : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                 )}
               >
-                <Icon className="size-4 shrink-0" />
+                <HugeiconsIcon icon={icon} size={16} className="shrink-0" />
                 {!collapsed && label}
               </Link>
             );
@@ -157,13 +158,13 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             )}
 
             <DropdownMenuItem render={<Link href="/settings" />} className="gap-2">
-              <Settings className="size-3.5" />
+              <HugeiconsIcon icon={Settings01Icon} size={14} />
               {t.menu.settings}
             </DropdownMenuItem>
 
             {/* Language inline */}
             <div className="flex items-center gap-2 px-1.5 py-1">
-              <Globe className="size-3.5 shrink-0 text-muted-foreground" />
+              <HugeiconsIcon icon={Globe02Icon} size={14} className="shrink-0 text-muted-foreground" />
               <span className="flex-1 text-sm text-muted-foreground">{t.menu.language}</span>
               <div className="flex gap-1">
                 {LOCALES.map((l) => (
@@ -198,7 +199,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
               onSelect={() => signOut({ callbackUrl: '/login' })}
               className="gap-2"
             >
-              <LogOut className="size-3.5" />
+              <HugeiconsIcon icon={Logout01Icon} size={14} />
               {t.menu.signOut}
             </DropdownMenuItem>
           </DropdownMenuContent>
