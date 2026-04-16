@@ -8,7 +8,7 @@ type LevelName =
   | "Manager"
   | "Consultant"
   | "Founding";
-type LevelColor = "yellow" | "orange" | "red" | "violet";
+type LevelColor = "teal" | "blue" | "pink" | "purple";
 
 interface LevelConfig {
   bars: number;
@@ -16,23 +16,23 @@ interface LevelConfig {
 }
 
 const LEVEL_CONFIG: Record<LevelName, LevelConfig> = {
-  Junior: { bars: 1, color: "yellow" },
-  Confirmed: { bars: 2, color: "orange" },
-  Senior: { bars: 3, color: "red" },
-  Consultant: { bars: 3, color: "red" },
-  Lead: { bars: 4, color: "violet" },
-  Manager: { bars: 4, color: "violet" },
-  Founding: { bars: 4, color: "violet" },
+  Junior: { bars: 1, color: "teal" },
+  Confirmed: { bars: 2, color: "blue" },
+  Consultant: { bars: 2, color: "blue" },
+  Senior: { bars: 3, color: "pink" },
+  Manager: { bars: 4, color: "pink" },
+  Lead: { bars: 4, color: "purple" },
+  Founding: { bars: 4, color: "purple" },
 };
 
 const COLOR_CLASSES: Record<LevelColor, { bar: string; text: string }> = {
-  yellow: { bar: "bg-yellow-400", text: "text-yellow-500" },
-  orange: { bar: "bg-orange-400", text: "text-orange-500" },
-  red: { bar: "bg-red-400", text: "text-red-500" },
-  violet: { bar: "bg-violet-500", text: "text-violet-500" },
+  teal: { bar: "bg-teal-6", text: "text-teal-12" },
+  blue: { bar: "bg-blue-400", text: "text-blue-500" },
+  pink: { bar: "bg-pink-400", text: "text-pink-500" },
+  purple: { bar: "bg-purple-400", text: "text-purple-500" },
 };
 
-const BAR_HEIGHTS = ["h-3.5", "h-3.75", "h-4", "h-4.25"] as const;
+const BAR_HEIGHTS = ["h-4", "h-4", "h-4", "h-4"] as const;
 
 interface LevelIndicatorProps {
   level: LevelName;

@@ -7,7 +7,6 @@ import {
   Building06Icon,
   HomeWifiIcon,
   Globe02Icon,
-  UserGroup02Icon,
   Location06Icon,
   ContractsIcon,
   UserMultipleIcon,
@@ -33,7 +32,7 @@ type WorkMode = "onsite" | "hybrid" | "remote";
 
 const WORK_MODE_CONFIG: Record<
   WorkMode,
-  { icon: typeof Building01Icon; label: string; className: string }
+  { icon: typeof Building06Icon; label: string; className: string }
 > = {
   onsite: {
     icon: Building06Icon,
@@ -208,41 +207,45 @@ export function JobCard({ job, status, onSelect }: JobCardProps) {
       onClick={() => onSelect(job)}
       onKeyDown={(e) => e.key === "Enter" && onSelect(job)}
       className={cn(
-        "flex cursor-pointer gap-6 rounded-3xl border border-border/50 bg-card px-7 py-6",
+        "flex cursor-pointer gap-6 rounded-2xl border border-border/50 bg-card px-7 py-6",
         "transition-colors hover:border-border hover:bg-zinc-50/40",
         isApplied && "border-l-[3px] border-l-emerald-400",
       )}
     >
       {/* ── Logo ───────────────────────────────────────────────── */}
-      <div className="mt-0.5 flex size-14 shrink-0 items-center justify-center rounded-2xl border border-border/60 bg-zinc-100 text-base font-bold text-zinc-600">
+      <div className="mt-0.5 flex size-14 shrink-0 items-center justify-center rounded-xl border border-border/60 bg-zinc-100 text-base font-bold text-zinc-600">
         {initials}
       </div>
 
       {/* ── Content ────────────────────────────────────────────── */}
-      <div className="flex shrink-0 flex-col gap-1.5">
-        {/* Row 1: Company name + date + applied indicator */}
-        <div className="flex items-center gap-2">
-          <span className="text-lg font-semibold leading-tight text-foreground">
-            {job.company}
-          </span>
-          <span className="text-muted-foreground/50">·</span>
-          <span className="text-xs text-muted-foreground">{postedAt}</span>
-          {isApplied && (
-            <span className="ml-1 flex items-center gap-1 text-xs font-medium text-emerald-600">
-              <Check className="size-3.5" /> Applied
+      <div className="flex shrink-0 flex-col gap-3">
+        <div className="mt-1 flex shrink-0 flex-col gap-1">
+          {/* Row 1: Company name + date + applied indicator */}
+          <div className="flex items-center gap-1.5">
+            <span className="text-m font-semibold leading-tight text-foreground">
+              {job.company}
             </span>
+            <span className="text-xs text-zinc-500">·</span>
+            <span className="flex items-center gap-1 text-xs text-zinc-500">
+              {postedAt}
+              {isApplied && (
+                <span className="ml-1 flex items-center gap-1 text-xs font-medium text-emerald-600">
+                  <Check className="size-3.5" /> Applied
+                </span>
+              )}
+            </span>
+          </div>
+
+          {/* Row 2: Description — single line truncated */}
+          {descSnippet && (
+            <p className="max-w-120 truncate text-sm leading-relaxed text-muted-foreground">
+              {descSnippet}
+            </p>
           )}
         </div>
 
-        {/* Row 2: Description — single line truncated */}
-        {descSnippet && (
-          <p className="max-w-120 truncate text-sm leading-relaxed text-muted-foreground">
-            {descSnippet}
-          </p>
-        )}
-
         {/* Row 3: Sector + team size + location + connection avatars */}
-        <div className="mt-1 flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           {/* Sector badge */}
           <Badge
             variant="outline"

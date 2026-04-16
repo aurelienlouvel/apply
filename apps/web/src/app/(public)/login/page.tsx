@@ -80,10 +80,14 @@ export default function LoginPage() {
           onClick={handleSignIn}
           disabled={loading}
           className="mt-10 w-full max-w-sm text-base font-medium"
-          size="xl"
+          size="lg"
         >
           {loading ? (
-            <HugeiconsIcon icon={Loading02Icon} size={16} className="animate-spin" />
+            <HugeiconsIcon
+              icon={Loading02Icon}
+              size={16}
+              className="animate-spin"
+            />
           ) : (
             <LinkedInIcon className="size-4 shrink-0" />
           )}
