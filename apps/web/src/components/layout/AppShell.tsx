@@ -2,12 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { Sidebar } from './Sidebar';
-import type { AppSettings } from '@/lib/settings';
-
-export interface JobGroup {
-  label: string;
-  count: number;
-}
+import type { Application, Interview } from '@/types/applications';
+import type { Profile } from '@/types/profiles';
+import type { OfferGroupWithCount } from '@/types/offer-groups';
 
 const DEFAULT_WIDTH = 240;
 const MIN_WIDTH = 180;
@@ -15,12 +12,16 @@ const MAX_WIDTH = 360;
 
 export function AppShell({
   children,
-  settings,
-  jobGroups,
+  profiles,
+  offerGroups,
+  applications,
+  interviews,
 }: {
   children: React.ReactNode;
-  settings: AppSettings;
-  jobGroups: JobGroup[];
+  profiles: Profile[];
+  offerGroups: OfferGroupWithCount[];
+  applications: Application[];
+  interviews: Interview[];
 }) {
   const [collapsed, setCollapsed] = useState(false);
   const [sidebarWidth, setSidebarWidth] = useState(DEFAULT_WIDTH);
@@ -56,8 +57,10 @@ export function AppShell({
         onToggle={toggle}
         width={sidebarWidth}
         onWidthChange={handleWidthChange}
-        settings={settings}
-        jobGroups={jobGroups}
+        profiles={profiles}
+        offerGroups={offerGroups}
+        applications={applications}
+        interviews={interviews}
       />
       <main className="flex-1 overflow-y-auto">{children}</main>
     </div>

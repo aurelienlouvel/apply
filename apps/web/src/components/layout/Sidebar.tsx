@@ -4,9 +4,9 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { HugeiconsIcon } from '@hugeicons/react';
 import {
-  Briefcase01Icon,
+  Briefcase08Icon,
   DashboardCircleIcon,
-  GitBranchIcon,
+  Chatting01Icon,
   Globe02Icon,
   Logout01Icon,
   PanelLeftIcon,
@@ -14,6 +14,10 @@ import {
   Settings01Icon,
   Add01Icon,
   User02Icon,
+  Plug01Icon,
+  CheckmarkCircle02Icon,
+  CancelCircleIcon,
+  Clock01Icon,
 } from '@hugeicons/core-free-icons';
 import { useSession, signOut } from 'next-auth/react';
 import { cn } from '@/lib/utils';
@@ -22,6 +26,7 @@ import { useLocale } from '@/components/providers/Providers';
 import { WhatsNew } from '@/components/changelog/WhatsNew';
 import { CURRENT_VERSION } from '@/lib/changelog';
 import { LOCALES } from '@/lib/i18n';
+import { entrySlug } from '@/lib/slug';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -32,17 +37,15 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
-import type { AppSettings } from '@/lib/settings';
-import type { JobGroup } from './AppShell';
+import type { Application, Interview, InterviewStage } from '@/types/applications';
+import type { Profile } from '@/types/profiles';
+import type { OfferGroupWithCount } from '@/types/offer-groups';
 
 /* ── Constants ────────────────────────────────────────────────────── */
 
 const COLLAPSED_WIDTH = 56;
 export const MIN_SIDEBAR_WIDTH = 180;
 export const MAX_SIDEBAR_WIDTH = 360;
-
-// icon width (16) + gap-2.5 (10) + px-2 (8) = 34 px → sub-item indent
-const SUB_INDENT = 'pl-[34px]';
 
 /* ── Logo SVG paths ───────────────────────────────────────────────── */
 
@@ -52,9 +55,30 @@ const TEXT_PATH =
 const ICON_PATH =
   'M305.446 104C311.182 104 316.053 108.675 316.922 115.06C320.789 143.482 331.189 219.414 336.89 256.226L376.912 223.214C382.627 218.501 389.205 226.979 384.256 232.686C361.599 258.809 336.534 287.203 324.477 299.143C321.614 301.979 317.551 300.418 316.52 296.284C305.791 253.234 290.208 179.201 284.508 151.82C283.231 145.683 278.258 141.442 272.667 141.723L185.916 146.089C170.431 146.868 155.77 154.551 146.961 168.913C137.199 184.828 124.688 208.542 116.231 236.673C114.987 240.809 117.787 245.019 121.664 244.923C184.751 243.362 214.688 222.428 246.201 183.302C248.249 180.759 252.018 181.754 252.795 185.074C278.214 293.786 211.561 316.018 59.5191 298.755C50.5632 297.738 44.3155 288.227 46.4044 278.367C58.8702 219.527 81.1871 174.152 99.4481 144.458C116.428 116.847 145.4 104 175.225 104L305.446 104Z';
 
+/* ── Helpers ──────────────────────────────────────────────────────── */
+
+function daysAgo(dateStr: string): string {
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  if (days === 0) return 'today';
+  if (days < 30) return `${days}d ago`;
+  const months = Math.floor(days / 30);
+  return `${months}mo ago`;
+}
+
+const STAGE_COLORS: Record<InterviewStage, string> = {
+  'HR Interview': 'bg-teal-100 text-teal-700',
+  Manager: 'bg-blue-100 text-blue-700',
+  'Design Case': 'bg-pink-100 text-pink-700',
+  'Team-Fit': 'bg-violet-100 text-violet-700',
+  Technical: 'bg-orange-100 text-orange-700',
+};
+
 /* ── Nav primitives ───────────────────────────────────────────────── */
 
-/** Simple nav link (no sub-items, no [+] button) — used for Home. */
+/** Simple nav link (no sub-items, no [+] button) — used for Home & Integrations. */
 function NavLink({
   href,
   label,
@@ -98,10 +122,10 @@ function NavLink({
 }
 
 /**
- * Nav section — same header style as NavLink, but with:
- * • a [+] button that fades in on hover of the header row
- * • optional inline badges (e.g. accepted / rejected counts)
- * • sub-items rendered below
+ * Nav section — non-clickable label header (xs, medium, muted) with:
+ * • icon + optional badges (left of label) + label
+ * • a [+] button that fades in on hover
+ * • page items rendered below
  */
 function NavSection({
   href,
@@ -123,7 +147,7 @@ function NavSection({
   const pathname = usePathname();
   const active = pathname === href || pathname.startsWith(href + '/');
 
-  // Collapsed: just the icon with a tooltip, no sub-items
+  // Collapsed: icon links to the section page
   if (collapsed) {
     const el = (
       <Link
@@ -147,23 +171,15 @@ function NavSection({
   }
 
   return (
-    <div>
-      {/* Header row — group/section scoped to this row only */}
+    <div className="mt-3">
+      {/* Header row — non-clickable label, [+] on hover */}
       <div className="group/section relative">
-        <Link
-          href={href}
-          className={cn(
-            'flex items-center gap-2.5 rounded-md px-2 py-1.5 pr-8 text-sm transition-colors',
-            active
-              ? 'bg-accent text-accent-foreground font-medium'
-              : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-          )}
-        >
-          <HugeiconsIcon icon={icon} size={16} className="shrink-0" />
-          <span className="flex-1 truncate">{label}</span>
+        <div className="flex items-center gap-2 px-2 py-1 pr-8">
+          <HugeiconsIcon icon={icon} size={14} className="shrink-0 text-muted-foreground" />
+          <span className="truncate text-xs font-medium text-muted-foreground">{label}</span>
           {badges}
-        </Link>
-        {/* [+] button — absolutely positioned over the right side of the header row */}
+        </div>
+        {/* [+] button */}
         <Link
           href={addHref}
           className="absolute right-1.5 top-1/2 flex size-5 -translate-y-1/2 items-center justify-center rounded text-muted-foreground opacity-0 transition-opacity hover:bg-accent group-hover/section:opacity-100"
@@ -173,34 +189,67 @@ function NavSection({
         </Link>
       </div>
 
-      {/* Sub-items */}
-      {children && <div className="flex flex-col">{children}</div>}
+      {/* Page items */}
+      {children && <div className="flex flex-col gap-0.5 mt-0.5">{children}</div>}
     </div>
   );
 }
 
-/** Indented sub-item row — no icon, no dash, optional right element. */
+/** Section page item — sm text, hover state, optional right element. Clickable when `href` is set. */
 function SubItem({
   label,
   right,
+  href,
 }: {
   label: string;
   right?: React.ReactNode;
+  href?: string;
 }) {
-  return (
-    <div className={cn('flex items-center gap-2 py-[3px] pr-2', SUB_INDENT)}>
-      <span className="flex-1 truncate text-xs text-muted-foreground">{label}</span>
+  const content = (
+    <>
+      <span className="flex-1 truncate text-sm text-foreground">{label}</span>
       {right && <span className="shrink-0">{right}</span>}
+    </>
+  );
+
+  const className =
+    'flex items-center gap-2 rounded-md px-2 py-1.5 pr-2 transition-colors hover:bg-accent';
+
+  if (href) {
+    return (
+      <Link href={href} className={className}>
+        {content}
+      </Link>
+    );
+  }
+
+  return <div className={cn(className, 'cursor-default')}>{content}</div>;
+}
+
+/** Placeholder item when a section has no data yet. */
+function EmptySubItem({ label }: { label: string }) {
+  return (
+    <div className="px-2 py-1.5">
+      <span className="text-xs italic text-muted-foreground/40">{label}</span>
     </div>
   );
 }
 
-/** Sub-item placeholder when a section has no data yet. */
-function EmptySubItem({ label }: { label: string }) {
+/** Status badge — tight icon + count, placed left of the section label. */
+function StatusBadge({
+  icon,
+  count,
+  color,
+}: {
+  icon: typeof CheckmarkCircle02Icon;
+  count: number;
+  color: string;
+}) {
   return (
-    <div className={cn('py-[3px] pr-2', SUB_INDENT)}>
-      <span className="text-xs italic text-muted-foreground/40">{label}</span>
-    </div>
+    <span className={cn('inline-flex shrink-0 items-center gap-0.5 text-[10px] font-medium', color)}>
+      <HugeiconsIcon icon={icon} size={10} />
+      {count}
+    </span>
   );
 }
 
@@ -211,8 +260,10 @@ interface SidebarProps {
   onToggle: () => void;
   width: number;
   onWidthChange: (width: number) => void;
-  settings: AppSettings;
-  jobGroups: JobGroup[];
+  profiles: Profile[];
+  offerGroups: OfferGroupWithCount[];
+  applications: Application[];
+  interviews: Interview[];
 }
 
 export function Sidebar({
@@ -220,8 +271,10 @@ export function Sidebar({
   onToggle,
   width,
   onWidthChange,
-  settings,
-  jobGroups,
+  profiles,
+  offerGroups,
+  applications,
+  interviews,
 }: SidebarProps) {
   const pathname = usePathname();
   const { data: session } = useSession();
@@ -270,6 +323,14 @@ export function Sidebar({
     ? user.name.split(' ').map((p) => p[0]).join('').slice(0, 2).toUpperCase()
     : '?';
 
+  // Applications derived data
+  const acceptedCount = applications.filter((a) => a.status === 'accepted').length;
+  const rejectedCount = applications.filter((a) => a.status === 'rejected').length;
+  const pendingWaitingCount = applications.filter((a) => a.status === 'pending-waiting').length;
+  const recentApplications = [...applications]
+    .sort((a, b) => new Date(b.appliedAt).getTime() - new Date(a.appliedAt).getTime())
+    .slice(0, 4);
+
   return (
     <>
       <aside
@@ -314,7 +375,7 @@ export function Sidebar({
 
         {/* Nav */}
         <nav className="flex flex-1 flex-col gap-0.5 overflow-y-auto">
-          {/* Home — simple link, no sub-items */}
+          {/* Home */}
           <NavLink
             href="/"
             label={t.nav.home ?? 'Home'}
@@ -322,18 +383,35 @@ export function Sidebar({
             collapsed={collapsed}
           />
 
-          {/* Profile */}
+          {/* Integrations */}
+          <NavLink
+            href="/integrations"
+            label={t.nav.integrations ?? 'Integrations'}
+            icon={Plug01Icon}
+            collapsed={collapsed}
+          />
+
+          {/* Spacer between top links and sections */}
+          {!collapsed && <div className="h-3" />}
+
+          {/* Profiles */}
           <NavSection
-            href="/settings"
-            label="Profile"
+            href="/profiles"
+            label={t.nav.profiles ?? 'Profiles'}
             icon={User02Icon}
             collapsed={collapsed}
-            addHref="/settings"
+            addHref="/profiles"
           >
-            {settings.searchTitles.length > 0 ? (
-              settings.searchTitles.map((title) => <SubItem key={title} label={title} />)
+            {profiles.length > 0 ? (
+              profiles.map((p) => (
+                <SubItem
+                  key={p.id}
+                  label={p.jobTitle}
+                  href={`/profiles/${entrySlug([p.jobTitle], p.id)}`}
+                />
+              ))
             ) : (
-              <EmptySubItem label="No search titles" />
+              <EmptySubItem label="No profiles yet" />
             )}
           </NavSection>
 
@@ -341,26 +419,30 @@ export function Sidebar({
           <NavSection
             href="/offers"
             label={t.nav.offers ?? 'Offers'}
-            icon={Briefcase01Icon}
+            icon={Briefcase08Icon}
             collapsed={collapsed}
             addHref="/settings"
           >
-            {jobGroups.length > 0 ? (
-              jobGroups.map(({ label, count }) => (
-                <SubItem
-                  key={label}
-                  label={label}
-                  right={
-                    count > 0 ? (
-                      <span className="rounded bg-muted px-1 py-px text-[10px] font-medium text-muted-foreground">
-                        {count}
-                      </span>
-                    ) : null
-                  }
-                />
-              ))
+            {offerGroups.length > 0 ? (
+              offerGroups.map((g) => {
+                const label = [g.searchTitle, g.location].filter(Boolean).join(', ');
+                return (
+                  <SubItem
+                    key={g.id}
+                    label={label}
+                    href={`/offers/${entrySlug([g.searchTitle, g.location], g.id)}`}
+                    right={
+                      g.count > 0 ? (
+                        <span className="rounded bg-muted px-1 py-px text-[10px] font-medium text-muted-foreground">
+                          {g.count}
+                        </span>
+                      ) : null
+                    }
+                  />
+                );
+              })
             ) : (
-              <EmptySubItem label="No offers scraped yet" />
+              <EmptySubItem label="No offer groups yet" />
             )}
           </NavSection>
 
@@ -372,28 +454,80 @@ export function Sidebar({
             collapsed={collapsed}
             addHref="/applications"
             badges={
-              <span className="ml-0.5 flex shrink-0 items-center gap-0.5">
-                <span className="rounded bg-muted px-1 py-px text-[10px] font-medium text-muted-foreground">
-                  0 ✓
+              applications.length > 0 ? (
+                <span className="flex shrink-0 items-center gap-1.5">
+                  {acceptedCount > 0 && (
+                    <StatusBadge
+                      icon={CheckmarkCircle02Icon}
+                      count={acceptedCount}
+                      color="text-emerald-500/70"
+                    />
+                  )}
+                  {rejectedCount > 0 && (
+                    <StatusBadge
+                      icon={CancelCircleIcon}
+                      count={rejectedCount}
+                      color="text-red-400/80"
+                    />
+                  )}
+                  {pendingWaitingCount > 0 && (
+                    <StatusBadge
+                      icon={Clock01Icon}
+                      count={pendingWaitingCount}
+                      color="text-muted-foreground/70"
+                    />
+                  )}
                 </span>
-                <span className="rounded bg-muted px-1 py-px text-[10px] font-medium text-muted-foreground">
-                  0 ✗
-                </span>
-              </span>
+              ) : null
             }
           >
-            <EmptySubItem label="No applications yet" />
+            {recentApplications.length > 0 ? (
+              recentApplications.map((app) => (
+                <SubItem
+                  key={app.id}
+                  label={`${app.company}, ${app.jobTitle}`}
+                  href={`/applications/${entrySlug([app.company, app.jobTitle], app.id)}`}
+                  right={
+                    <span className="text-[10px] text-muted-foreground/60">
+                      {daysAgo(app.appliedAt)}
+                    </span>
+                  }
+                />
+              ))
+            ) : (
+              <EmptySubItem label="No applications yet" />
+            )}
           </NavSection>
 
-          {/* Processes */}
+          {/* Interviews */}
           <NavSection
-            href="/processes"
-            label={t.nav.processes ?? 'Processes'}
-            icon={GitBranchIcon}
+            href="/interviews"
+            label={t.nav.interviews ?? 'Interviews'}
+            icon={Chatting01Icon}
             collapsed={collapsed}
-            addHref="/processes"
+            addHref="/interviews"
           >
-            <EmptySubItem label="No active processes" />
+            {interviews.length > 0 ? (
+              interviews.map((interview) => (
+                <SubItem
+                  key={interview.id}
+                  label={`${interview.company}, ${interview.jobTitle}`}
+                  href={`/interviews/${entrySlug([interview.company, interview.jobTitle], interview.id)}`}
+                  right={
+                    <span
+                      className={cn(
+                        'rounded px-1.5 py-px text-[10px] font-medium',
+                        STAGE_COLORS[interview.stage]
+                      )}
+                    >
+                      {interview.stage}
+                    </span>
+                  }
+                />
+              ))
+            ) : (
+              <EmptySubItem label="No active interviews" />
+            )}
           </NavSection>
         </nav>
 
